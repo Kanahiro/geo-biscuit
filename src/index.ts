@@ -1,13 +1,19 @@
-import { Point, Feature, FeatureCollection, MultiPolygon } from 'geojson';
+import { FeatureCollection, MultiPolygon } from 'geojson';
 import explode from '@turf/explode';
 import { toMercator, toWgs84 } from '@turf/projection';
-import { square } from 'turf';
 
 type CutterFunction = (
     features: FeatureCollection,
 ) => FeatureCollection<MultiPolygon>;
 
 type MultiPolygonGeometry = number[][][][];
+
+type cutterMakeOptions = {
+    shape?: MultiPolygonGeometry;
+    scaler?: number;
+};
+
+type TEMPLATE_CUTTER_NAMES = 'triangle' | 'square' | 'pentagon' | 'custom';
 
 export const getBiscuitCutter = (
     cutterName: TEMPLATE_CUTTER_NAMES,
@@ -42,8 +48,12 @@ const getCutter = (
     cutterName: TEMPLATE_CUTTER_NAMES,
     options: cutterMakeOptions,
 ): MultiPolygonGeometry => {
-    if (cutterName === 'custom') return [[[[0, 0]]]];
-    return TEMPLATE_CUTTERS[cutterName]!.map((polygon) => {
+    if (cutterName === 'custom' && !options.shape) {
+        throw Error("you must set shape in 'custom' cutter");
+    }
+    const cutter =
+        cutterName === 'custom' ? options.shape! : TEMPLATE_CUTTERS[cutterName];
+    return cutter.map((polygon) => {
         return polygon.map((shapeHole) => {
             return shapeHole.map((latlon) => {
                 return latlon.map((vec) => vec * options.scaler!);
@@ -65,8 +75,6 @@ const cut = (
     });
 };
 
-type TEMPLATE_CUTTER_NAMES = 'triangle' | 'square' | 'pentagon' | 'custom';
-
 const TEMPLATE_CUTTERS: {
     [key in TEMPLATE_CUTTER_NAMES]: MultiPolygonGeometry;
 } = {
@@ -74,8 +82,8 @@ const TEMPLATE_CUTTERS: {
         [
             [
                 [0, 1],
-                [1, -1],
-                [-1, -1],
+                [0.866, -0.5],
+                [-0.866, -0.5],
                 [0, 1],
             ],
         ],
@@ -94,33 +102,14 @@ const TEMPLATE_CUTTERS: {
     pentagon: [
         [
             [
-                [10, 10],
-                [10, 20],
-                [20, 20],
-                [20, 10],
-                [10, 10],
-            ],
-            [
-                [15, 15],
-                [15, 17],
-                [17, 17],
-                [17, 15],
-                [15, 15],
-            ],
-        ],
-        [
-            [
-                [0, 0.1],
-                [0.1, -0.1],
-                [-0.1, -0.1],
-                [0, 0.1],
+                [0, 1],
+                [0.951, 0.309],
+                [0.587, -0.809],
+                [-0.587, -0.809],
+                [-0.951, 0.309],
+                [0, 1],
             ],
         ],
     ],
     custom: [],
-};
-
-type cutterMakeOptions = {
-    vertexes?: number[][];
-    scaler?: number;
 };
