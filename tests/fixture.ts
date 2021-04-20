@@ -1,3 +1,4 @@
+import { FeatureCollection } from 'geojson';
 export const points = {
     type: 'FeatureCollection',
     generator: 'overpass-ide',
@@ -535,4 +536,4 @@ export const points = {
             id: 'node/7012998621',
         },
     ],
-};
+} as FeatureCollection;

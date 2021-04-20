@@ -2,23 +2,36 @@ import { FeatureCollection, MultiPolygon } from 'geojson';
 import explode from '@turf/explode';
 import { toMercator, toWgs84 } from '@turf/projection';
 
+type MultiPolygonGeometry = number[][][][];
+type TEMPLATE_CUTTER_NAMES =
+    | 'triangle'
+    | 'square'
+    | 'pentagon'
+    | 'star'
+    | 'custom';
+
 type CutterFunction = (
     features: FeatureCollection,
 ) => FeatureCollection<MultiPolygon>;
-
-type MultiPolygonGeometry = number[][][][];
 
 type cutterMakeOptions = {
     shape?: MultiPolygonGeometry;
     scaler?: number;
 };
 
-type TEMPLATE_CUTTER_NAMES = 'triangle' | 'square' | 'pentagon' | 'custom';
-
+/**
+ * function factory method
+ * @param cutterName - select cutter by name from some presets or custom
+ * @param options
+ * @returns Function to transform Point to MultiPoylgon
+ */
 export const getBiscuitCutter = (
     cutterName: TEMPLATE_CUTTER_NAMES,
     options: cutterMakeOptions = {},
 ): CutterFunction => {
+    if (cutterName === 'custom' && !options.shape) {
+        throw Error("you must set shape in 'custom' cutter");
+    }
     return (features: FeatureCollection): FeatureCollection<MultiPolygon> => {
         const pointized = explode(features);
         const mercatorized = toMercator(pointized);
@@ -48,15 +61,12 @@ const getCutter = (
     cutterName: TEMPLATE_CUTTER_NAMES,
     options: cutterMakeOptions,
 ): MultiPolygonGeometry => {
-    if (cutterName === 'custom' && !options.shape) {
-        throw Error("you must set shape in 'custom' cutter");
-    }
     const cutter =
         cutterName === 'custom' ? options.shape! : TEMPLATE_CUTTERS[cutterName];
     return cutter.map((polygon) => {
         return polygon.map((shapeHole) => {
             return shapeHole.map((latlon) => {
-                return latlon.map((vec) => vec * options.scaler!);
+                return latlon.map((vec) => vec * (options.scaler || 1));
             });
         });
     });
@@ -111,5 +121,22 @@ const TEMPLATE_CUTTERS: {
             ],
         ],
     ],
-    custom: [],
+    star: [
+        [
+            [
+                [0, 1],
+                [0.225, 0.309],
+                [0.951, 0.309],
+                [0.363, -0.118],
+                [0.587, -0.809],
+                [0, -0.382],
+                [-0.587, -0.809],
+                [-0.363, -0.118],
+                [-0.951, 0.309],
+                [-0.225, 0.309],
+                [0, 1],
+            ],
+        ],
+    ],
+    custom: [], //unused shape
 };
