@@ -7,15 +7,15 @@ Transform points to MultiPolygon by a shape.
 
 -   original points
 
-    <img src='./imgs/img01.png'  width='40%'>
+    <img src='./imgs/img01.png'  width='80%'>
 
 -   transformed poylgons (star, scaler=100)
 
-    <img src='./imgs/img02.png'  width='40%'>
+    <img src='./imgs/img02.png'  width='80%'>
 
 -   transformed poylgons (triangle, scaler=100)
 
-    <img src='./imgs/img03.png'  width='40%'>
+    <img src='./imgs/img03.png'  width='80%'>
 
 ## usage
 
