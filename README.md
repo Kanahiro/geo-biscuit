@@ -43,6 +43,22 @@ console.log(biscuits); // MultiPolygon-FeatureCollection
 npm install -g geo-biscuit
 ```
 
+```
+usage: geo-biscuit [-h] [-v] [-i INPUT] [-o OUTPUT] [--shape SHAPE] [--scaler SCALER]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
+  -i INPUT, --input INPUT
+                        input geojson path
+  -o OUTPUT, --output OUTPUT
+                        output geojson path
+  --shape SHAPE         biscuit-cutter name, triangle, square...
+  --scaler SCALER       polygon size multiplier, default to 1.0
+```
+
+#### example
+
 ```sh
 geo-biscuit --input ./example/input.geojson --output ./example/output.geojson --shape triangle --scaler 100
 ```
