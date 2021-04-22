@@ -62,3 +62,10 @@ optional arguments:
 ```sh
 geo-biscuit --input ./example/input.geojson --output ./example/output.geojson --shape triangle --scaler 100
 ```
+
+## preset shape names
+
+-   triangle
+-   square
+-   pentagon
+-   star
