@@ -19,7 +19,7 @@ Transform points to MultiPolygon by a shape.
 
 -   transformed poylgons (triangle, scaler=500)
 
-    <img src='./imgs/img03.png'  width='80%'>
+    <img src='./imgs/img04.png'  width='80%'>
 
 ## usage
 
