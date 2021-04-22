@@ -69,3 +69,30 @@ geo-biscuit --input ./example/input.geojson --output ./example/output.geojson --
 -   square
 -   pentagon
 -   star
+
+## custom shape
+
+You also can make `custom shape` poylgons.
+
+```typescript
+const biscuitCutter = getBiscuitCutter('custom', {
+    // define custom shape by MultiPolygon Geometry
+    shape: [
+        [
+            [
+                [0, 1],
+                [0.866, 0.5],
+                [0.866, -0.5],
+                [0, -1],
+                [-0.866, -0.5],
+                [-0.866, 0.5],
+                [0, 1],
+            ], // hexagon
+        ],
+    ],
+    scaler: 100,
+});
+
+const biscuits = biscuitCutter(geojson);
+console.log(biscuits); // hexagons
+```
